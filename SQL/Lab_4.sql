@@ -367,32 +367,305 @@ FROM ORDERS O)
 
 
 --1.19.	Найти сотрудников, кто выполнял заказы в 2008, но не выполнял в 2007 (как минимум 2-мя разными способами).
+SELECT * 
+FROM SALESREPS S
+WHERE S.EMPL_NUM IN (
+SELECT 
+  O.REP
+FROM ORDERS O 
+WHERE (O.ORDER_DATE BETWEEN '2008-01-01' AND '2008-12-31')
+AND NOT EXISTS 
+  (SELECT * FROM
+    ORDERS O1 
+  WHERE O1.REP = O.REP AND 
+  O1.ORDER_DATE<'2008-01-01'))
 
-
+---2 способ исключающим EXCEPT
+SELECT 
+  O.REP 
+FROM ORDERS O
+WHERE YEAR(O.ORDER_DATE)=2008
+EXCEPT 
+SELECT 
+  O.REP 
+FROM ORDERS O
+WHERE YEAR(O.ORDER_DATE)=2007
 
 
 --1.20.	Найти организации, которые не делали заказы в 2008, но делали в 2007 (как минимум 2-мя разными способами).
+SELECT 
+  O.CUST
+FROM ORDERS O
+WHERE YEAR(O.ORDER_DATE)=2007
+and O.CUST not in (
+ SELECT 
+  O.CUST
+FROM ORDERS O
+WHERE YEAR(O.ORDER_DATE)=2008)
+
+
+USE [Maiseyeu_04]
 --1.21.	Найти организации, которые делали заказы в 2008 и в 2007 (как минимум 2-мя разными способами).
+
+SELECT DISTINCT
+  O.CUST 
+FROM ORDERS O
+WHERE YEAR(O.ORDER_DATE)=2008 
+AND EXISTS (
+    SELECT  * 
+    FROM ORDERS O1 
+    WHERE 
+	O1.CUST = O.CUST 
+	AND Year(O1.ORDER_DATE)=2007) 
+
+
+SELECT O.CUST FROM ORDERS O
+WHERE O.ORDER_DATE BETWEEN '2008-01-01' AND '2008-12-31'
+INTERSECT  /*ПЕРЕСЕЧЕНИЕ*/
+SELECT O.CUST FROM ORDERS O
+WHERE YEAR(O.ORDER_DATE)=2007
+
+
+
 --2.	Выполните DML операции:
 --2.1.	Создайте таблицу Аудит (дата, операция, производитель, код) – она будет использоваться для контроля записи в таблицу PRODUCTS.
+CREATE TABLE AUDIT_PROD(
+ID INT IDENTITY,
+OPER_DATE DATE,
+OPER_NAME VARCHAR(20) CHECK (OPER_NAME IN ('INS', 'DEL','UPD')),
+PROODUCER VARCHAR(60),
+CODE VARCHAR(20))
+
 --2.2.	Добавьте во временную таблицу все товары.
+SELECT 
+* 
+INTO #TEMPGOODS
+FROM PRODUCTS P
+
+
 --2.3.	Добавьте в эту же временную таблицу запись о товаре, используя ограничения NULL и DEFAULT.
---2.4.	Добавьте в эту же временную таблицу запись о товаре, и одновременно добавьте эти же данные в таблицу аудита (в столбце операция укажите INSERT, в столбце даты – текущую дату).
+SELECT * FROM #TEMPGOODS
+
+ALTER TABLE #TEMPGOODS ALTER COLUMN DESCRIPTION VARCHAR(25) NOT NULL;
+
+--ПОПЫТКА ВСТАВІТЬ ОГРАНІЧЕНІЕ - Cannot find the object "#TEPMGOODS" because it does not exist or you do not have permissions.
+ALTER TABLE #TEPMGOODS 
+  ADD CONSTRAINT df_PRICE
+  DEFAULT 1000.0 FOR price;
+
+--ПОПЫТКА ВСТАВІТЬ ОГРАНІЧЕНІЕ - Cannot find the object "#TEPMGOODS" because it does not exist or you do not have permissions.
+ALTER TABLE #TEPMGOODS 
+  ADD CONSTRAINT df_QUANT
+  DEFAULT 2 FOR QTY_ON_HAND;
+
+
+INSERT INTO #TEMPGOODS (MFR_ID, PRODUCT_ID, DESCRIPTION, PRICE,QTY_ON_HAND)
+  VALUES('REI',9010,'Mercedes', 15900, 7)
+
+INSERT INTO #TEMPGOODS (MFR_ID, PRODUCT_ID, DESCRIPTION, PRICE,QTY_ON_HAND)
+  VALUES('REI',9110, 'GM', 11000, 3)
+
+
+
+--2.4.	Добавьте в эту же временную таблицу запись о товаре, и одновременно добавьте эти же данные в таблицу аудита 
+-- (в столбце операция укажите INSERT, в столбце даты – текущую дату).
+INSERT INTO #TEMPGOODS (MFR_ID, PRODUCT_ID, DESCRIPTION, PRICE,QTY_ON_HAND)
+  VALUES('IBA',1210, 'AUDIT', 860, 21)
+
+INSERT INTO AUDIT_PROD (OPER_DATE,OPER_NAME,PROODUCER,CODE) 
+  VALUES(GETDATE(), 'INS','IBA', 'INSERT DATE' )
+  
+
 --2.5.	Обновите данные о товарах во временной таблице – добавьте 20% к цене.
+UPDATE #TEMPGOODS SET PRICE = 1.2*PRICE
+-- глянем что получислось
+SELECT * FROM #TEMPGOODS
+
 --2.6.	Обновите данные о товарах, которые заказывала First Corp. во временной таблице – добавьте 10% к цене.
---2.7.	Обновите данные о товаре во временной таблице, и одновременно добавьте эти же данные в таблицу аудита (в столбце операция укажите UPDATE, в столбце даты – текущую дату).
+
+update #TEMPGOODS set PRICE = 1.1*price 
+ where PRODUCT_ID in (
+select 
+  o.PRODUCT
+from ORDERS o
+join CUSTOMERS c on c.CUST_NUM = o.CUST
+where c.COMPANY = 'First Corp.')
+
+--2.7.	Обновите данные о товаре во временной таблице, и одновременно добавьте эти же данные в таблицу аудита
+--      (в столбце операция укажите UPDATE, в столбце даты – текущую дату).
+
+BEGIN
+  UPDATE #TEMPGOODS SET PRICE=99.99 WHERE PRODUCT_ID='41002';
+  INSERT INTO AUDIT_PROD (OPER_DATE,OPER_NAME,PROODUCER,CODE) 
+    VALUES(GETDATE(), 'UPD','USER', 'UPD 91.20->99.99' );   
+END 
+
+
 --2.8.	Удалите товары, которые заказывала First Corp. во временной таблице.
---2.9.	Удалите данные о каком-либо товаре во временной таблице, и одновременно добавьте эти данные в таблицу аудита (в столбце операция укажите DELETE, в столбце даты – текущую дату).
+DELETE FROM #TEMPGOODS 
+WHERE PRODUCT_ID IN
+(SELECT 
+  O.PRODUCT 
+FROM ORDERS O
+LEFT JOIN CUSTOMERS C ON C.CUST_NUM = O.CUST
+WHERE C.COMPANY = 'First Corp.')
+
+
+--2.9.	Удалите данные о каком-либо товаре во временной таблице, и одновременно добавьте эти данные в таблицу аудита 
+--      (в столбце операция укажите DELETE, в столбце даты – текущую дату).
+
+BEGIN
+  DELETE FROM #TEMPGOODS WHERE QTY_ON_HAND = 0;
+  INSERT INTO AUDIT_PROD (OPER_DATE,OPER_NAME,PROODUCER,CODE)
+       VALUES(GETDATE(),'DEL','DEL RECORDS WHERE QUANTITY=0', '910');
+END
+-- ГЛЯНЕМ РЕЗУЛЬТАТ
+SELECT * FROM AUDIT_PROD
+
 --3.	Создайте представления:
 --3.1.	Покупателей, у которых есть заказы выше определенной суммы.
+CREATE VIEW V_CUSTOMER_ORDERS
+AS
+SELECT 
+  C.COMPANY, 
+  O.AMOUNT 
+FROM CUSTOMERS C 
+JOIN ORDERS O ON O.CUST = C.CUST_NUM
+WHERE O.AMOUNT>10000
+
+--- ГЛЯНЕМ, ЧТО ВЫШЛО
+SELECT * FROM V_CUSTOMER_ORDERS
+ORDER BY AMOUNT
+
 --3.2.	Сотрудников, у которых офисы находятся в восточном регионе.
+CREATE VIEW V_EASTREGION_SALERS
+AS
+SELECT 
+  S.EMPL_NUM, 
+  S.NAME AS EMPLNAME, 
+  S.REP_OFFICE AS OFFICE 
+FROM SALESREPS S
+JOIN OFFICES F ON S.REP_OFFICE= F.OFFICE
+WHERE F.REGION = 'EASTERN'
+
+-- ПРОВЕРІМ
+SELECT * FROM V_EASTREGION_SALERS
+
 --3.3.	Заказы, оформленные в 2008 году.
+CREATE VIEW V_ORDERS_Y2008
+AS
+SELECT * FROM ORDERS O
+WHERE YEAR(O.ORDER_DATE)=2008
+
+-- ПРОВЕРІМ
+SELECT * FROM V_ORDERS_Y2008
+
+
 --3.4.	Сотрудники, которые не оформили ни одного заказа.
+CREATE VIEW V_EMPL_WITHOUTORDERS
+AS
+SELECT * FROM SALESREPS S
+WHERE NOT EXISTS ( 
+SELECT * 
+FROM ORDERS O
+WHERE O.REP = S.EMPL_NUM)
+
+SELECT * FROM V_EMPL_WITHOUTORDERS
+
+
 --3.5.	Самый популярный товар.
---4.	Продемонстрируйте применение DML операций над представлениями.
---5.	Продемонстрируйте и объясните применение опций CHECK OPTION и SCHEMABINDING.
+---? самый популярный товар:
+---- больше всего продано по количеству?
+---- или больше всего заказов где фигурирует данный товар?
+
+select top(1) 
+  o.PRODUCT, 
+  p.DESCRIPTION, 
+  sum(o.QTY)
+from ORDERS o
+join PRODUCTS p on p.PRODUCT_ID = o.PRODUCT
+group by o.PRODUCT,p.DESCRIPTION
+order by 3 desc
+
+/*больше всего заказов с данным товаром*/
+select top(1) 
+  o.PRODUCT,
+  count(o.ORDER_NUM)
+from ORDERS o
+group by o.PRODUCT
+order by 2 desc
+
+--4.Продемонстрируйте применение DML операций над представлениями.
+
+alter view v_orders_y2008
+as
+SELECT 
+  o.ORDER_DATE, 
+  o.ORDER_NUM, 
+  c.COMPANY as customer, 
+  s.NAME as saler, 
+  o.QTY, o.AMOUNT  
+FROM ORDERS O
+left join CUSTOMERS c on c.CUST_NUM = o.CUST
+join SALESREPS s on s.EMPL_NUM = o.REP
+WHERE YEAR(O.ORDER_DATE)=2008
+
+select * from v_orders_y2008
+
+/*создаем простое представление на основе 1 таблицы для послед.вставки данных*/
+CREATE VIEW V_ORDERSLite_2008
+AS
+SELECT * FROM ORDERS O
+WHERE YEAR(O.ORDER_DATE)=2008
+
+/* проверим, что есть */
+select * from V_ORDERSLite_2008
+
+/* вставка данных в таблицу через простое представление*/
+INSERT INTO V_ORDERSLite_2008 
+  VALUES(900010, '2024-10-23',2101,106,'FEA',114, 90, 14520.99)
+
+/* проверим, как вставились данные*/
+select * from ORDERS where year(ORDER_DATE)=2024
+
+/*ОБНОВЛЯЕМ ДАННЫЕ ЧЕРЕЗ ПРЕДСТАВЛЕНИЕ*/
+UPDATE V_ORDERSLite_2008 SET AMOUNT= 1.5*AMOUNT
+WHERE ORDER_NUM=112989
+
+/*УДАЛЕНИЕ*/
+DELETE FROM V_ORDERSLite_2008 WHERE QTY =4
+
+
+
+
+--5. Продемонстрируйте и объясните применение опций CHECK OPTION и SCHEMABINDING.
+/*модифицируем*/
+ALTER VIEW V_ORDERSLite_2008
+AS
+SELECT * FROM ORDERS O
+WHERE YEAR(O.ORDER_DATE)=2008
+WITH CHECK OPTION
+
+/* НЕ ДАЕТ ВСТАВИТЬ, Т.К. ЕСТЬ ОГРАНИЧЕНИЕ 
+YEAR(O.ORDER_DATE)=2008
+WITH CHECK OPTION
+
+The attempted insert or update failed because the target view either specifies WITH CHECK OPTION or 
+spans a view that specifies WITH CHECK OPTION 
+and one or more rows resulting from the operation did not qualify under the CHECK OPTION constraint.
+*/
+INSERT INTO V_ORDERSLite_2008 
+  VALUES(900011, '2024-10-23',2101,106,'FEA',114, 90, 14520.99)
+
+/*сносим представление*/
+drop view V_ORDERSLite_2008
+
+
+
+
+
 --6.	Продемонстрируйте пример применения операций над множествами.
 --7.	Продемонстрируйте применение команды TRUNCATE.
 --8.	Напишите скрипт из аналогичных запросов к базе данных по варианту. В качестве комментария укажите условие запроса.
 --9.	Продемонстрируйте оба скрипта преподавателю.
-?
+
