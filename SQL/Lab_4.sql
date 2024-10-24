@@ -638,7 +638,7 @@ DELETE FROM V_ORDERSLite_2008 WHERE QTY =4
 
 
 
---5. Продемонстрируйте и объясните применение опций CHECK OPTION и SCHEMABINDING.
+--5. Продемонстрируйте и объясните применение опций CHECK OPTION и SCHEMABINDING. ??????????
 /*модифицируем*/
 ALTER VIEW V_ORDERSLite_2008
 AS
@@ -665,7 +665,124 @@ drop view V_ORDERSLite_2008
 
 
 --6.	Продемонстрируйте пример применения операций над множествами.
+-- из задания 1.19.	Найти сотрудников, кто выполнял заказы в 2008, но не выполнял в 2007
+SELECT 
+  O.REP 
+FROM ORDERS O
+WHERE YEAR(O.ORDER_DATE)=2008
+EXCEPT -- ислючающий EXCEPT
+SELECT 
+  O.REP 
+FROM ORDERS O
+WHERE YEAR(O.ORDER_DATE)=2007
+
+use [Maiseyeu_04]
+
 --7.	Продемонстрируйте применение команды TRUNCATE.
+/* TRUNCATE — это команда DDL, быстро и целиком очищающая таблицу.
+• Это команда освобождает пространство, занимаемое таблицей, возвращая его сразу же обратно.
+• Команда не учитывает отдельные строки и не регистрирует лог операций, тем самым, не занимая пространство журналирования.
+• TRUNCATE не активирует триггеры на уровне строк, так как не взаимодействует с ними по отдельности.
+• Работает с эксклюзивной блокировкой на протяжении всей операции.
+• В случае автоинкрементных полей – обнуляет регистры.
+• Обновляет неиспользуемые ранее индексы, делая их готовыми к дальнейшему использованию.
+*/
+-- заполним временную таблицу
+select * 
+into ##tempOrders
+from ORDERS
+select * from ##tempOrders
+
+/*сносим все с таблицы*/
+Truncate table ##tempOrders
+
+--смотрим, что получилось
+select * from ##tempOrders
+
+
 --8.	Напишите скрипт из аналогичных запросов к базе данных по варианту. В качестве комментария укажите условие запроса.
+use [2024_Maiseyeu]
+
+
+-- создадим представление, показывающее рейтинг популярных товаров
+CREATE VIEW V_SALEGOODS (GOODNAME, QUANTITY, AMOUNT)
+AS
+select 
+  g.GOOD_NAME, 
+  sum(ol.QUANTITY) as quantity,
+  SUM(ol.QUANTITY*ol.FACT_COST) as amount
+from ORDERSLINE ol
+left join GOODS g on g.ID = ol.GOOD_ID
+group by g.GOOD_NAME
+
+-- ИСПОЛЬЗУЯ ОГРАНИЧЕНИЕ, МОЖНО ВЫБИРАТЬ ЛИБО ПО СТОИМОСТИ, ЛИБО ПО КОЛИЧЕСТВУ
+-- НАПРИМЕР, ТОП 3 ТОВАРА ПРИНОСЯЩИЕ БОЛЬШИЙ ДОХОД
+
+SELECT TOP(3) * FROM V_SALEGOODS VS
+ORDER BY AMOUNT DESC
+
+-- ИЛИ ЧАЩЕ ВСЕГО РЕАЛИЗУЕМЫЕ
+SELECT * FROM V_SALEGOODS
+ORDER BY QUANTITY DESC 
+
+--ПРЕДСТАВЛЕНИЕ, ПОКАЗЫАВЮЩЕЕ РЕЙТИНГ ПРОДАЖ ПО РЕГИОНАМ(ОБЛАСТЯМ)
+CREATE VIEW V_REGIONSALES
+AS
+SELECT 
+R.CITY,
+R.DISTRICT AS DISTRICT,
+SUM(OL.QUANTITY) AS QUANTITY,
+SUM(OL.QUANTITY*OL.FACT_COST) AS AMOUNT
+FROM ORDERSLINE OL
+LEFT JOIN ORDERS O ON OL.MASTERKEY = O.ID
+LEFT JOIN CUSTOMER C ON C.ID = O.CUSTOMER_ID
+LEFT JOIN REGION R ON R.ID = C.REGIONID 
+GROUP BY R.CITY, R.DISTRICT
+
+-- ГЛЯНЕМ
+SELECT * FROM V_REGIONSALES  VS
+ORDER BY VS.AMOUNT DESC
+
+-- СОЗДАДИМ ПРЕДСТАВЛЕНИЕ О ЗАКАЗАХ И ВСЕ, ЧТО ТАМ ФИГУРИРУЕТ, НА ОСНОВАНИИ КОТОРОГО ПОТОМ МОЖНО ДЕЛАТЬ ДРУГИЕ
+
+CREATE VIEW V_ORDERS
+AS
+SELECT 
+O.ID AS ORDERID, 
+O.CUSTOMER_ID, 
+O.DRIVER_ID,
+O.KIND_DEL_ID,
+O.LOADING_ID,
+O.NUMBER,
+O.ORDERDATE,
+O.TRANSPORT_ID,
+O.TYPE_DEL_ID,
+OL.FACT_COST,
+OL.GOOD_ID,
+OL.ID AS LINEID,
+OL.MASTERKEY,
+OL.QUANTITY
+FROM ORDERS O
+JOIN ORDERSLINE OL ON OL.MASTERKEY = O.ID
+
+--- ПРЕДСТАВЛЕНИЕ ПОКАЗЫВАЮЩЕЕ КАК РАБОТАЮТ ВОДИТЕЛИ -)
+CREATE VIEW V_DRIVERSALES
+AS
+SELECT 
+D.SURNAME, D.FIRSTNAME,  D.LASTNAME,
+SUM(VO.QUANTITY*VO.FACT_COST) AS AMOUNT
+FROM V_ORDERS VO
+JOIN DRIVER D ON D.ID = VO.DRIVER_ID
+GROUP BY D.SURNAME, D.FIRSTNAME,  D.LASTNAME
+
+SELECT 
+  CAST(D.SURNAME AS VARCHAR(20)) + ' ' + CAST(D.FIRSTNAME AS VARCHAR(20)) + ' ' +  CAST( D.LASTNAME AS VARCHAR(20)),
+  D.AMOUNT
+FROM V_DRIVERSALES D
+ORDER BY  D.AMOUNT DESC
+ 
+
+
+
 --9.	Продемонстрируйте оба скрипта преподавателю.
 
