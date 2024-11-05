@@ -781,8 +781,6 @@ SELECT
 FROM V_DRIVERSALES D
 ORDER BY  D.AMOUNT DESC
  
-
-
-
+ 
 --9.	Продемонстрируйте оба скрипта преподавателю.
 
