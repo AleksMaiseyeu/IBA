@@ -399,3 +399,9 @@ return @res;
 end;
 
 select c.ID, c.FIRSTNAME, c.SURNAME, dbo.FullSumByCustomer(c.ID, '2000-01-01', '2024-12-31') as SumSales from CUSTOMER c 
+
+
+print getdate();
+waitfor DELAY '00:00:10'
+go 3
+
