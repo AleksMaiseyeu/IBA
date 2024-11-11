@@ -251,3 +251,15 @@ while (@num<=10)
 
   -- проверим, что получилось
   select * from #tempTable
+
+
+  DECLARE @VAL INT = 100;
+  declare @res varchar(15); 
+  WHILE (@VAL<=1000)
+    BEGIN
+	  set @res = cast(@VAL AS VARCHAR(4));
+	  if (@VAL % 200 = 0)
+	     set @res = @res + '  четное';  
+	  PRINT @res;
+	  SET @VAL = @VAL  +100;
+ 	END

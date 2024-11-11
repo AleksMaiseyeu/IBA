@@ -217,12 +217,14 @@ update MaxCostProduct set MaxCost=5350.00  where PRODUCT_ID = '2A44L';
 --смотрим результат
  select * from MaxCostProduct 
 
+ select * from AUDIT
+
 
 
 --6.Создать триггер уровня базы данных. Продемонстрировать работоспособность триггера.
 
 --- ?????? что здесь имеется ввиду ????---
-
+create trigger INS_Table 
 
 --7.Удалить все триггеры. -- по такому принципу
 drop trigger Tr_MaxCostProduct_UPD; 

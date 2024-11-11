@@ -384,6 +384,9 @@ from salesreps s
 join offices o on s.rep_office = o.office;
 
 
+select * from ORDERS o
+left join 
+
 
 --3.26.	Найти покупателей и их заказы (в результирующем наборе должны быть: 
 --наименование покупателя, наименование товара, производитель, количество и итоговая сумма).
@@ -522,4 +525,33 @@ JOIN ORDERSLINE OL ON OL.MASTERKEY= O.ID
 JOIN CUSTOMER C ON C.ID = O.CUSTOMER_ID
 GROUP BY C.SURNAME, C.FIRSTNAME
 ORDER BY 3 DESC
+
+
+use [Maiseyeu_04]
+
+select o.ORDER_DATE, o.ORDER_NUM, o.AMOUNT, o.QTY,
+c.COMPANY, s.NAME as SaleName, p.DESCRIPTION
+from ORDERS o
+join CUSTOMERS c on c.CUST_NUM = o.CUST
+join SALESREPS s on s.EMPL_NUM = o.REP
+join PRODUCTS p on p.PRODUCT_ID = o.PRODUCT
+
+
+
+select * from OFFICES o
+ WHERE NOT EXISTS
+ (SELECT S.REP_OFFICE 
+ FROM SALESREPS S
+ WHERE O.OFFICE = S.REP_OFFICE)
+
+ SELECT  
+ *
+ FROM OFFICES O
+ LEFT JOIN SALESREPS S ON S.REP_OFFICE = O.OFFICE
+ WHERE S.EMPL_NUM IS NULL
+
+
+
+
+
 
