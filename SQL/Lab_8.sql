@@ -166,6 +166,7 @@ varchar(50) и может быть INSERT, UPDATEили LOGONDELETE любым событием инструкции
 EXEC sp_settriggerorder @triggername = 'TR_Office_del_3',
     @order = 'First',
     @stmttype = 'DELETE';
+
 delete  from OFFICES where OFFICE=33
 
 /*  result
