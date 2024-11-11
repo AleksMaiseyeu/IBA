@@ -206,7 +206,6 @@ for
  declare UpdateSalesRepSum cursor 
  for
    select o.rep, sum(o.AMOUNT) from ORDERS o 
-   where o.REP = 101
    group by o.rep
 
    declare @repID int, @SumSales decimal(9,2);
@@ -216,27 +215,29 @@ for
 
 	 while @@FETCH_STATUS = 0
 	   begin
-	     
+     
 		 --- создадим вложенный курсор, в котором будем обновлять данные
 		  declare UPD_SalesRep cursor 
 		  for
-		    select distinct c.EMPL_NUM, c.SALES from SALESREPS c 
+		    select c.EMPL_NUM, c.SALES from SALESREPS c 
 			group by EMPL_NUM, c.SALES
 		    
 			declare  @emplID int, @Summ decimal(9, 2);
             
 			open UPD_SalesRep;
-			  fetch UPD_SalesRep into @emplID,  @Summ;
+			   fetch UPD_SalesRep into @emplID,  @Summ;
 			   while @@FETCH_STATUS=0
 			    begin
-				   update SALESREPS set @Summ = @SumSales
-				     where @emplID = @repID;
+				   update SALESREPS set SALES = @SumSales
+				     where EMPL_NUM = @repID;
+				   fetch UPD_SalesRep into @emplID,  @Summ;
 				end
 			 
-			close UPD_Customer;
-			deallocate UPD_Customer;
+			close UPD_SalesRep;
+			deallocate UPD_SalesRep;
 
-	   end
+        fetch UpdateSalesRepSum into @repID, @SumSales; 
+	   end 
    close UpdateSalesRepSum;
    deallocate UpdateSalesRepSum;
  
