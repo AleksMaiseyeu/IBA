@@ -283,12 +283,16 @@ INSERT INTO DELIVERY_RESULT(ID, ORDERSLINE_ID, ISDELIVERED,TYPEDEL_NAME,NODELIVE
 /*========== гюопняш й лнеи ад ===========*/
 
 /*цкъмел гюйюгш, б йнрнпшу еярэ ндмю хкх меяйнкэйн онгхжхи ме днярюкбмн*/
-SELECT  O.NUMBER, O.ORDERDATE, G.GOOD_NAME FROM ORDERS O
+--0,0156946 
+SELECT  
+  O.NUMBER, O.ORDERDATE, G.GOOD_NAME 
+FROM ORDERS O
 LEFT JOIN ORDERSLINE OL ON OL.MASTERKEY = O.ID
 LEFT JOIN GOODS G ON G.ID = OL.GOOD_ID
 WHERE OL.ID IN (SELECT ORDERSLINE_ID FROM DELIVERY_RESULT WHERE ISDELIVERED=0)
 
 /*сгмюел опхвхмш он йнрнпшл рнбюпш ме днярюбкемш х врн щрн гю рнбюп*/
+--0,0131517
 SELECT 
   G.GOOD_NAME, 
   OL.QUANTITY, 
@@ -302,6 +306,7 @@ WHERE DR.ISDELIVERED = 0
 
 
 /* нопедекхл пецхнмш он сашбюмхч онйсоюрекэяйни яонянамнярх*/
+--0,0385281
 SELECT 
   R.CITY, 
   SUM(OL.QUANTITY*OL.FACT_COST) AMOUNT
@@ -337,6 +342,7 @@ SELECT
 FROM #RELEVANTREGION R
 
 /*цкъмел опндюфх ян яйхдйни/мюжемйни */
+--0,0082109
 SELECT 
 G.GOOD_NAME, G.PRICECOST, OL.FACT_COST,
 IIF(G.PRICECOST<OL.FACT_COST, OL.FACT_COST-G.PRICECOST,0) AS BONUS,

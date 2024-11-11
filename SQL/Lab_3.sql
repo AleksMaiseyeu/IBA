@@ -211,15 +211,18 @@ SELECT * FROM ORDERS O
 WHERE O.ORDER_DATE>='2008-01-01'
 
 --3.3.	Выбрать все офисы из определенного региона и управляемые определенным сотрудником.
-SELECT o.*,
+--0,0243582, 0,0098764
+SELECT o.OFFICE,o.CITY,
 s.NAME as EmpName
 FROM OFFICES o
 left join SALESREPS s on o.MGR = s.MANAGER
 WHERE o.region='Western'
 and s.NAME like '%Nancy%'
 
+use [Maiseyeu_03]
 --3.4.	Выбрать заказы, сумма которых больше определенного значения.
-select * 
+--0,003315, 0,0032886
+select O.ORDER_NUM, O.AMOUNT 
 from ORDERS o
 where o.AMOUNT>15000
 
@@ -339,6 +342,7 @@ select cust, avg(amount) avg_of_orders from orders group by cust;
 
 
 --3.23.	Найти сотрудников, у которых есть заказ стоимости выше определенного значения.
+--0,003315, 0,003315
 select cust, amount from orders 
 where amount >1000;
 
@@ -350,7 +354,7 @@ group by mfr_id
 --3.25.	Найти самый дорогой товар каждого производителя.
 select mfr_id, product_id, max(price) from products
 group by mfr_id, product_id
-
+--0,0262242
 select 
   o.order_num,
   o.order_date,
@@ -368,6 +372,7 @@ join salesreps s on o.REP=s.EMPL_NUM
 join customers c on o.CUST = c.CUST_NUM
 join products p on o.product = p.product_id and o.mfr = p.mfr_id
 
+--0,0080408, --0,0080408
 select 
   s.empl_num,
   s.name,
@@ -500,11 +505,15 @@ select * from ##OrdersEastRegion
 
 
 --Выбрать все заказы, выполненные определенным покупателем.
+use [2024_Maiseyeu]
+--0,007554 --0,007554  ????? - если все выбираем, нет смысла индексы?
+
 SELECT * FROM ORDERS O
 JOIN CUSTOMER C ON C.ID = O.CUSTOMER_ID
 WHERE C.SURNAME = 'ВОЛКОВ'
 
 --Выбрать всех покупателей в порядке уменьшения обшей стоимости заказов.
+--0,0228753, 0,0342672 без уникального индекса
 SELECT 
 C.SURNAME, C.FIRSTNAME,
 SUM(OL.FACT_COST*OL.QUANTITY) AS AMOUNT
