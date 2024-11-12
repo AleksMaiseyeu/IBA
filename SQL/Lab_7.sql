@@ -355,6 +355,8 @@ SELECT COUNT(*) FROM OFFICES -- Результат:  - изменился
 -- неявная транзакция
 create table WEATHER (w varchar(10) unique);
 
+use [Maiseyeu_04]
+
 DECLARE @flag int = 2 ;
 SET IMPLICIT_TRANSACTIONS ON;
 INSERT weather VALUES ('Sun'), ('Rain'), ('Wind');
