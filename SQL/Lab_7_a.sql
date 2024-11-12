@@ -2,8 +2,17 @@
 --Транзакции в T-SQL. Конспект
 
 /*1.	Разработать скрипт, демонстрирующий работу в режиме неявной транзакции.*/
-
 use [Maiseyeu_04]
+
+ declare @state_Tr int = 0;
+ SET IMPLICIT_TRANSACTIONS ON  --подтверждение неявных транзакций
+
+ INSERT INTO weather(w) VALUES('Implicit transaction');
+
+ if (@state_Tr=1) commit tran else rollback tran;
+
+ SET IMPLICIT_TRANSACTIONS OFF; -- отключаем подтверждение
+
 select COUNT(*) from OFFICES
 
 
@@ -62,11 +71,139 @@ begin catch
 end catch
 
 
-/*4.	Разработать два скрипта A и B. Продемонстрировать неподтвержденное, неповторяющееся и фантомное чтение. 
+/*4.	Разработать два скрипта A и B. Продемонстрировать 
+    *неподтвержденное
+	*неповторяющееся 
+	*фантомное чтение. 
+
+
 Показать усиление уровней изолированности. */
 
+use [Maiseyeu_04]
+
+--========7.1=========
+--устанавливаем уровень изоляции READ UNCOMMITTED - самый слабый
+--ДЕМОНСТРАЦИЯ ОШИБОК ГРЯЗНОЕ ЧТЕНИЕ (неподтвержденное)
+SET TRANSACTION ISOLATION LEVEL READ UNCOMMITTED 
+BEGIN TRAN
+  SELECT COUNT(*) FROM AUDIT --24
+
+--========7.3=========
+--ПРОВЕРЯЕМ
+  SELECT COUNT(*) FROM AUDIT --23
+
+--========7.5=========
+SELECT COUNT(*) FROM AUDIT  --24
+COMMIT TRAN;
 
 
+/*==========================================
+уровень изоляции READ COMMITTED
+ДЕМОНСТРАЦИЯ (НЕ ДОПУСКАЕТ ГРЯЗНОЕ ЧТЕНИЕ)   */
+
+/*===========7.7=============*/
+SET TRANSACTION ISOLATION LEVEL READ COMMITTED
+BEGIN TRAN
+  SELECT COUNT(*) FROM AUDIT --24
+
+/*===========7.9=============*/
+--ПРОВЕРЯЕМ
+  SELECT COUNT(*) FROM AUDIT --ЖДЕТ....Executing query...
+
+-- как только транзакция в параллельной сессии завершена - сформировался результат 
+-- 24 т.к. параллельная транзакция откатилась rollback
+
+COMMIT TRANSACTION;
+
+
+/*==========================================
+уровень изоляции READ COMMITTED
+ДЕМОНСТРАЦИЯ (допускат неповторяющееся чтение)              
+разрешает  добавление/удаление/изменение записей в парраллельных сессиях  */
+/*============7-11=============*/
+SET TRANSACTION ISOLATION LEVEL READ COMMITTED
+BEGIN TRAN
+  SELECT COUNT(*) FROM AUDIT --24
+
+/*============7-13=============*/
+
+  SELECT COUNT(*) FROM AUDIT --23
+--ПОВТОРНОЕ ЧТЕНИЕ ДАННЫХ ДАЛО РАЗНЫЙ РЕЗУЛЬТАТ: 24 записи в (7-11) и 23 записи в (7-13)
+COMMIT TRANSACTION;
+
+
+/*==========================================
+уровень изоляции REPEATABLE READ  
+ДЕМОНСТРАЦИЯ (допускат неповторяющееся чтение)              
+разрешает  добавление  но ЗАПРЕЩАЕТ удаление и изменение записей в парраллельных сессиях  */
+
+
+INSERT INTO AUDIT(ST,TRN,C) VALUES('INS','TRASACTION','INSERT TRANSACTION'); 
+
+/*============ 7**14 =============*/
+SET TRANSACTION ISOLATION LEVEL REPEATABLE READ 
+BEGIN TRAN
+  SELECT COUNT(*) FROM AUDIT ---24
+
+/*============ 7**16 =============*/
+commit tran;
+/* ВЫВОД:
+мы не можем удалить запись при параллальном доступе к записям при уровне изоляции REPEATABLE READ */
+
+INSERT INTO AUDIT(ST,TRN,C) VALUES('INS','TRASACTION','INSERT TRANSACTION');
+
+
+
+/* попробуем обновить данные
+============ 7**17 =============*/
+SET TRANSACTION ISOLATION LEVEL REPEATABLE READ 
+BEGIN TRAN
+  SELECT COUNT(*) FROM AUDIT ---24
+
+/*============ 7**19 =============*/
+  commit tran;
+ 
+SELECT TOP(5) * FROM AUDIT ORDER BY ID DESC
+-- 37	INS	TRASACTION	REPEATABLE READ LEVEL 
+--обновілісь только после commit
+-- ВЫВОД: REPEATABLE READ LEVEL  Изменения делать тоже не позволяет!!!
+
+
+
+/* попробуем ВСТАВИТЬ данные
+============ 7**20 =============*/
+SET TRANSACTION ISOLATION LEVEL REPEATABLE READ 
+BEGIN TRAN
+  SELECT COUNT(*) FROM AUDIT ---24
+
+/*============ 7**22 =============*/
+ SELECT COUNT(*) FROM AUDIT  --25
+ SELECT TOP(5) * FROM AUDIT ORDER BY ID DESC
+
+ ---38	INS	TRASACTION	Вставка записи при уровне REPEATABLE READ
+ COMMIT TRAN;
+/*Вывод: вставку делать на момент открытой параллельной транзакции МОЖНО! */
+
+
+/*==========================================
+уровень изоляции serializable !!! самый высокий !!! */
+/*============ 7/23 =============*/
+SET TRANSACTION ISOLATION LEVEL serializable 
+BEGIN TRAN
+  SELECT COUNT(*) FROM AUDIT --25
+
+/*============ 7/25 =============*/
+rollback tran;
+ 
+ SELECT COUNT(*) FROM AUDIT --26
+/*
+  ВЫВОД:
+  уровень изоляции serializable при открытой параллельной ТР-И НЕ ПОЗВОЛЯЕТ вставлять данные 
+  отданако, как только параллельная транзакция прекращается - доступ восстанаваливается!
+  ВНЕ ЗАВИСИМОСТИ ОТ РЕЗУЛЬТАТА ДРУГОЙ ТРАНЗАКЦИИ (COMMIT или ROLLBACK)
+
+
+*/
 
 
 /*5.	Разработать скрипт, демонстриsрующий свойства вложенных транзакций.  */

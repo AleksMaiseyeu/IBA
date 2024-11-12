@@ -203,6 +203,7 @@ SET LOCK_TIMEOUT - период в миллисекундах, в течение которого транзакци€ будет о
 ”становка уровн€ изол€ции
 --------------------
 SET TRANSACTION ISOLATION LEVEL:
+
 	READ UNCOMMITTED
 	READ COMMITTED
 	REPEATABLE READ
