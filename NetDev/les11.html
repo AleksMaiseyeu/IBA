@@ -1,0 +1,29 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Задание 3.11</title>  
+</head>
+
+<body>
+  <div id="wrap1">
+    <p>Я обычный абзац</p>
+    <p>Я еще один обычный абзац</p>
+    <div id="wrap11">
+      <p id="zadanie1">Выведите это содержимое на страницу</p>
+    </div>
+  </div>
+  <script>
+  
+    let textByMap = document.body.firstElementChild.lastElementChild.firstElementChild.textContent
+    let textById = document.getElementById("zadanie1").innerText
+
+    console.log("ByMap: " + textByMap)
+    console.log("ByID: " + textById)
+  </script>
+
+     
+</body>
+</html>

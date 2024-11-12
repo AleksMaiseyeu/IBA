@@ -1,0 +1,62 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <title>Задание 3.1</title>  
+</head>
+
+<body>
+  <p> Класс MyString (вывод в консоль)</p>
+  <script>
+   class MyString{
+    _myString='';
+    constructor(value){      
+       this._myString =value; 
+    }
+    get MyString(){
+        return this._myString;
+    }
+    reverse(){
+        let ln = this._myString.length;
+        let str = this._myString;
+        let newStr=''; 
+        for (let i =ln-1; i>=0; i--) {
+            newStr += str[i];
+        }
+        return newStr;
+    }
+    ucFirst(){
+        let ln = this._myString.length;
+        let str = this._myString;
+        let newStr=''; 
+        newStr = str[0].toUpperCase();
+        for (let i=1; i<=ln-1; i++) {
+            newStr += str[i];
+        } 
+        return newStr;  
+    }
+    ucWords(){
+        let str = this._myString;
+        let arrSt = str.split(' ');
+        let newStr =''; 
+        let newWord = '';
+        for (let word of arrSt) {
+            newWord = word[0].toUpperCase();
+           for (let i=1; i<=word.length-1; i++) {
+             newWord += word[i];
+           } 
+            newStr += newWord + ' ';
+        }
+       return newStr; 
+    }
+
+   }
+   let st = new MyString('avast add word');
+   console.log(`first: ${st.MyString}`);
+   console.log(`recursive: ${st.reverse()}`);
+   console.log(`firstLetUpperCase: ${st.ucFirst()}`);
+
+   console.log(`uppCase: ${st.ucWords()}`);
+
+  </script>
+</body>
+</html>

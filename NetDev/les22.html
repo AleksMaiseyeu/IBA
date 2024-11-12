@@ -1,0 +1,49 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Задание 2.2</title>  
+    <script
+       src="https://code.jquery.com/jquery-3.7.1.js"
+       integrity="sha256-eKhayi8LEQwp4NKxN+CfCh+3qOVUtJn3QNZ0TciWLP4="
+       crossorigin="anonymous">
+    </script>
+</head>
+<script>
+    $(document).ready(function(){
+    
+    //Установим размер шрифта всех абзацев равным 20 пикселям
+    $('p').css("font-size", "20px");
+
+    //Изменим на зеленый цвет шрифта элемента с id=el2
+    $('#el2').css("color", "green");
+
+    //Изменим на красный цвет шрифта элемента с class=el3
+    $(".el3").css("color", "red");
+
+    //Сделаем жирным шрифт элементов с id=el2 и class=el3 
+    $("#el2, .el3").css("font-weight", "bold");
+
+    //Изменим на синий цвет текста кнопки
+    $('input').css("background-color", "blue");
+
+    //Установим размер шрифта всех элементов имеющих атрибут href равным 20 пикселям
+    $("[href]").css("font-size", "20px");
+
+    
+    //Изменим на зеленый цвет ссылки на www.google.com
+    $("[href='http://www.google.com/']").css("color", "green");
+    
+    });
+    </script>
+    <body>
+    <p>Я первый элемент.</p>
+    <p id="el2">Я второй элемент.</p>
+    <p class="el3">Я третий элемент.</p>
+    <input type="button" value="Я кнопка" />
+    <br /><br />
+    <a href="http://www.google.com/">Google</a>
+    <br /><br />
+    <a href="http://www.htmlbook.ru/HTML/">HTML учебник</a>
+    
+</html>

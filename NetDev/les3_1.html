@@ -1,0 +1,49 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <title>Задание 3.1</title>  
+</head>
+
+<body>
+  <p> Class Worker</p>
+
+  <p id="info"></p>
+  <p id="info2"></p>
+  <p id="res"></p>
+
+  <script>
+    class Worker {
+      constructor(name, surname, rate, days){
+        this.name = name;
+        this.surname = surname;
+        this.rate = rate;
+        this.days = days;
+      }
+      getSelary(){ 
+        return this.rate*this.days;
+      }
+    }
+
+    let woker1 = new Worker('Ivan', 'Ivanov', 23, 21);
+    let woker2 = new Worker('John', 'Weak', 7, 11);
+
+    document.getElementById("info").innerHTML=
+     "User: " + woker1.name + ' ' + woker1.surname + " -- salary:" + woker1.getSelary();
+
+     document.getElementById("info2").innerHTML=
+     "User: " + woker2.name + ' ' + woker2.surname + " -- salary:" + woker2.getSelary();
+    
+    let marker
+    if (woker1.getSelary() > woker2.getSelary()) 
+       marker = " >"
+    else if (woker1.getSelary() < woker2.getSelary())   
+       marker = " <"
+    else   
+       marker = " ="
+
+    document.getElementById("res").innerHTML=
+     "Salary " + woker1.name + ' ' + woker1.surname +  marker + "  than salary of " + woker2.name + ' ' + woker2.surname; 
+
+  </script>
+</body>
+</html>

@@ -1,0 +1,26 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Задание 3.7</title>  
+</head>
+
+<body>
+    <h1>Task 10</h1>
+    <script>
+      let browser = navigator.userAgent
+      let regexFirefox = /.*chrome*/i
+  
+    if(browser.match(regexFirefox)) {
+        location.href = "https://ya.ru"
+      } else {
+        location.href = "https://google.by"
+      }
+      console.log('NENENENE: ' + browser);
+    </script>
+
+     
+</body>
+</html>

@@ -1,0 +1,54 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <title>Задание 3.1</title>  
+</head>
+
+<body>
+  <p> Наследование классов.(вывод в консоль)</p>
+  <script>
+     class User {
+        _name='Alice';
+        _surname='Born';
+        _year;
+      constructor(name, surname, year){   
+        this._name = name;
+        this._surname = surname;
+        if ((year<2020) || (year>2024)) throw new Error("Проверьте год поступления!");
+        this._year = year;
+      }
+      set name(name){
+        this._name = name;
+      }
+      set surname(surname){
+        this._surname = surname; 
+      }  
+      set year(year) {
+        if ((year<2020) || (year>2024)) throw new Error("Проверьте год поступления!");
+        this._year = year;
+      }
+      getFullName(){
+        return this._name + ' ' + this._surname;
+      }  
+    }
+
+    class Student extends User{
+
+      getCourse(){
+        let date = new Date();
+        let year = date.getFullYear();
+
+        return year-this._year+1;
+      }
+    }
+
+    let us1 = new Student('Ivan', 'Ivanov', 2023);
+    console.log(`FullName: ${us1.getFullName()}`);
+    console.log(`Course: ${us1.getCourse()}`);
+
+    let user2 = new Student('Kolya','Bokov', 2020);
+    console.log(`FullName: ${user2.getFullName()}`);
+    console.log(`Course: ${user2.getCourse()}`);
+  </script>
+</body>
+</html>

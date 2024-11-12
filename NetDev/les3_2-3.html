@@ -1,0 +1,85 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <title>Задание 3.1</title>  
+</head>
+
+<body>
+  <p> Class Worker</p>
+
+  <p id="info"></p>
+  <p id="info2"></p>
+  <p id="res"></p>
+
+  <script>
+   
+    class Worker {
+        _days = 0;
+        _rate=0;
+      constructor(name, surname, rate){
+        this._name = name;
+        this._surname = surname;
+        this._rate = rate;
+      }
+
+      set name(name){
+        this._name = name;
+      }
+
+      set surname(surname){
+        this._surname = surname;
+      }
+
+      get name(){
+        return this._name + ' ' + this._surname; 
+      }
+
+      set rate(rate){
+        this._rate = rate;
+      }
+
+      set days(days){
+        if (days < 0) throw new Error("Не может быть с минусом!");
+        this._days = days;
+      }
+      get days(){
+        return this._days;
+      }
+      getSelary(){ 
+        return this._rate*this._days;
+      }
+    }
+
+    let woker1 = new Worker('Ivan', 'Ivanov', 23);
+    woker1.days=10;
+    woker1.name="Stanislav";
+    woker1.surname = "Pupkin";
+    woker1.rate = 10;
+
+    let woker2 = new Worker('John', 'Weak', 7);
+    woker2.days=100;
+    woker2.rate = 1;
+
+    let marker
+    if (woker1.getSelary() > woker2.getSelary()) 
+       marker = " >"
+    else if (woker1.getSelary() < woker2.getSelary())   
+       marker = " <"
+    else   
+       marker = " ="
+
+    let infoByWoker1 ="User: " + woker1.name + " -- salary:" + woker1.getSelary();
+    let infoByWoker2 = "User: " + woker2.name + " -- salary:" + woker2.getSelary(); 
+    let Result ="Salary " + woker1.name + ' ' + woker1.surname +  marker + "  than salary of " + woker2.name + ' ' + woker2.surname;
+    
+    document.getElementById("info").innerHTML=infoByWoker1;
+    document.getElementById("info2").innerHTML=infoByWoker2;  
+    document.getElementById("res").innerHTML=Result;
+
+    console.log(infoByWoker1);
+    console.log(infoByWoker2); 
+    console.log(Result); 
+     
+  </script>
+</body>
+</html>

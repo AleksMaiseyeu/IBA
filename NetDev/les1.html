@@ -1,0 +1,36 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <title>Задание 1</title>
+</head>
+<script>
+  function Res1() {
+    let val1, val2,val3;
+
+    val1 = Math.pow((48/3*Math.PI + 308/4*Math.E),2) - 203*Math.sin(5) + Math.pow((10*Math.PI - 3*Math.E),3);
+    document.getElementById(1).innerHTML='(48/3PI+308/4E)<sup>2</sup> -203sin(5) +(10PI+3E)<sup>3</sup>=' +  val1.toFixed(2);
+
+    val2= Math.pow(Math.cos(20) -Math.cos(3)+Math.tan(5),2)-203/Math.sin(2);
+    document.getElementById(2).innerHTML='(cos(20)-cos(3) +tan(5))<sup>2</sup> -203/sin(2)=' + val2.toFixed(2);
+    
+    val3=Math.pow(22*Math.PI/22*Math.E-Math.sin(3)*Math.tan(4)-34, 10);
+    document.getElementById(3).innerHTML='(22PI/22E-sin(3)*tan(4)-24)<sup>10</sup>=' + val3.toFixed(2);
+
+    let res=[];
+    res.push(val1,val2,val3);
+    res.sort();
+    let minim = res[0];
+
+    document.getElementById(4).innerHTML= minim.toFixed(2);      
+  }
+
+
+</script>
+<body onload=Res1()>
+
+ <span id="1"></span>  <br> 
+ <span id="2"></span>  <br> 
+ <span id="3"></span>  <br>
+ <p><span id="4">Минималка:</span>  <br></p>
+</body>
+</html>

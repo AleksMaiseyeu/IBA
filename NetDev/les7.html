@@ -1,0 +1,34 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Задание 3.7</title>  
+</head>
+
+<body>
+    <p>С помощью регулярного выражения найдите в тексте ниже все слова, выделенные жирным шрифтом 
+     (не используя поиск альтернатив).</p>
+     <p><b>yandex.ru</b> example.com <b>www.yandex.ru</b> example.ru <b>yandex</b> 
+        http://example.com <b>http://www.yandex.ru</b> <b>YANDEX.RU</b> 1</p>
+    
+    
+    
+    <script type='text/javascript'>
+   
+    let doc = document.querySelectorAll("p");
+    regex1=/<b>([^<b>]+)<\/b>/gi;
+
+    for (let i of doc){
+        if (regex1.test(i.innerHTML)) {
+            document.write(i.innerHTML.match(regex1)+'</b> ');
+            console.log(i.innerHTML.match(regex1) +'</b>');
+
+        }
+        
+    }
+     
+  </script>
+</body>
+</html>

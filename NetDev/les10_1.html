@@ -1,0 +1,25 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Задание 3.10 Detect.js</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Detect.js/2.2.2/detect.min.js" integrity="sha512-iNuMM5cmiXDvk4VCTp6UEbDwYy/dA3CFTTYKB6/V+LD62S58TQZ+sykXzhmVT1QvqHD39ZhecsPGXjZUaIuSWQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+</head>
+
+<body>
+    <h1>Task 10</h1>
+    <script>
+      let obj = detect.parse(navigator.userAgent);
+
+      if(obj.browser.family='Chrome') {
+        location.href = "https://ya.ru"
+      } else {
+        location.href = "https://google.by"
+      }
+    </script>
+
+     
+</body>
+</html>

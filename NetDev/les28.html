@@ -1,0 +1,68 @@
+<html>                                                                  
+<head>  
+<meta charset="utf-8">   
+<style>
+#code
+{
+background-color:#fffDBD;
+margin:10px;
+padding:5px;
+}
+#par1
+{
+color:#e40045;
+font-weight:bold;
+font-size:30px;
+}
+#par2
+{
+color:#3714B0;
+font-weight:bold;
+font-size:30px;
+}
+#par3
+{
+color:#FF5F00;
+font-weight:bold;
+font-size:30px;
+}
+</style>                                                         
+<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.5/jquery.min.js"></script>
+<script>   
+$(document).ready(function(){
+  // 1.
+ $("#but1").click(function(){
+    alert("1 абзац: " + $("#par1").css("color") + '\n' +
+          "2 абзац: " + $("#par2").css("color") + '\n'+
+          "3 абзац: " + $("#par3").css("color") + '\n');
+ });
+  // 2.
+  $("#but2").click(function(){
+     $("#par4").css("color","red");
+     $("#par5").css("font-size","25px");
+     $("#par6").css({'font-family':'Verdana','font-size': '33px'});
+     $("#par7").css({'font-family':'TimesTimes New Roman','font-weight':'bold','color': 'red', 'font-size': '27px'});
+   });       
+
+});                                 
+</script>                                                          
+</head>
+<body> 
+<p><b>1. После нажатия на кнопку с id=but1 должно отобразится всплывающее окно содержащее значения CSS свойств color элементов с id=par1, id=par2 и id=par3.</b></p>
+<div id="code">
+<p id="par1"> Я первый абзац.</p>
+<p id="par2"> Я второй абзац.</p>
+<p id="par3"> Я третий абзац.</p>
+<p> </p>
+<input id="but1" type="button" value="Вывести цвет абзацев" />
+</div>
+<p><b>2. После нажатия на кнопку с id=but2 элементы должны стать оформленными согласно их содержимому.</b></p>
+<div id="code">
+<p id="par4">Текст этого элемента отображен красным шрифтом.</p>
+<p id="par5">Текст этого элемента отображен шрифтом размером 25 пикселей.</p>
+<p id="par6">Текст этого элемента отображен шрифтом Verdana размером 33 пикселя.</p>
+<p id="par7">Текст этого элемента отображен жирным шрифтом Times New Roman красного цвета размером 27 пикселей.</p>
+<input id="but2" type="button" value="Оформить элементы"/>
+</div>
+</body>
+</html>
