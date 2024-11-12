@@ -66,4 +66,48 @@ end catch
 оНЙЮГЮРЭ СЯХКЕМХЕ СПНБМЕИ ХГНКХПНБЮММНЯРХ. */
 
 
+
+
+
 /*5.	пЮГПЮАНРЮРЭ ЯЙПХОР, ДЕЛНМЯРПХПСЧЫХИ ЯБНИЯРБЮ БКНФЕММШУ РПЮМГЮЙЖХИ.  */
+-- бкнфеммюъ рпюмгюйжхъ бедер яеаъ йюй ндмю анкэьюъ
+--р.е. дюфе еякх бмсрпеммюъ рпюмгюйжхъ гюйнлхвемю, мн опх щрнл бмеьмъъ нрйюршбюеряъ,
+--бяе хглемемхъ х бн бмсрпеммеи ме янупюмъчряъ
+
+USE [Maiseyeu_04]
+
+BEGIN TRAN; -- бмеьмъъ рп-ъ
+  INSERT INTO AUDIT(ST,TRN,C) VALUES('INS','TRASACTION','INSERT GLOBAL TRANSACTION'); -- бмеьмъъ рп-ъ
+
+  BEGIN TRAN --бмсрпеммъ рп-ъ
+    UPDATE AUDIT SET C='NEW VALUE IN TRANSACTION' WHERE ID = 6; 
+	COMMIT; --бмсрпеммъ рп-ъ 
+IF @@TRANCOUNT>0 
+  ROLLBACK; -- бмеьмъъ рп-ъ
+
+--2 бюпхюмр
+BEGIN TRAN; 
+  INSERT INTO AUDIT(ST,TRN,C) VALUES('INS','TRASACTION','INSERT GLOBAL TRANSACTION_2'); 
+
+  BEGIN TRAN --бмсрпеммъ рп-ъ
+    INSERT INTO AUDIT(ST,TRN,C) VALUES('UNIT','TRASACTION','INSERT INNER TRANSACTION'); 
+	--////гюбеднлн ньхайю р.й. CHECK опнбепъер рнкэйн INS/UPD/DEL
+	COMMIT; 
+IF @@TRANCOUNT>0 
+  COMMIT; -- бмеьмъъ рп-ъ
+
+  -- опнбепъел
+  SELECT * FROM AUDIT
+  --24	32	INS	TRASACTION	INSERT GLOBAL TRANSACTION
+  --25	34	INS	TRASACTION	INSERT GLOBAL TRANSACTION_2
+/* бшбнд:
+  *еякх бмсрпеммъъ рпюмгюйжхъ гюбепьемю я ньхайни (ROLLBACK бмсрпеммеи рп-х), 
+  мн опх щрнл бмеьмъъ рпюмгюйжхъ сяоеьмн нрпюанрюмю, рн хглемемхъ асдср 
+  бшонкеммш(янупюмемш) рнкэйн хмярпсйжхх хг бмеьмеи рпюмгюжхх
+  
+  *еякх бмеьмюъъ рпюмгюйжхъ гюбепьемю я ньхайни хкх ROLLBACK, рн
+  бме гюбхяхлнярх нр сяоеьмнярх бмсрпеммеи рпюмгюйжхх, бяе хглемемхъ асдср нрйюрюмш дн 
+  оепбнмювюкэмнцн янярнъмхъ
+*/
+
+
