@@ -18,3 +18,23 @@ try:
     var = 5 / 0
 except:
     print(1)
+
+
+c = [c * 3 for c in 'alex' if c!='e']
+print(c)
+
+# вывести тот элемент, который больше соседей
+ls = [32, 11, 98, 4 ,6 ,2, -6]
+newls =[]
+for x in range(len(ls)):
+    max =ls[0]
+    if ls[x]>max and ls[x-1]<max:
+        max=ls[x]
+        newls.append(max)
+print(newls)
+
+
+
+
+
+
