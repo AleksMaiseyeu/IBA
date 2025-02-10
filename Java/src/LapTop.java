@@ -16,6 +16,7 @@ public class LapTop {
         this.Size = Size;
         this.RAM = RAM;
     }
+
     public String getBrand(){
         return Brand;
     }
@@ -29,13 +30,17 @@ public class LapTop {
         return ProdYear;
     }
 
+    // метод выводит все характеристики
     public String GetFullInfo(){
         String res = "";
-        if (this.Brand.isEmpty())
+        if (!this.Brand.isEmpty())
           res += this.Brand;
         if (this.RAM!=0)
-            res += ' ' + this.RAM;
-
+            res += " RAM:" + Integer.toString(this.RAM);
+        if (this.Size!=0)
+            res += " Size: " + String.valueOf(this.Size);
+        if (this.ProdYear!=0)
+            res += " Year: " + String.valueOf(this.ProdYear);
         return res;
     }
 }
