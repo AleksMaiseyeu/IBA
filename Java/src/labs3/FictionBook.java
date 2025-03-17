@@ -1,5 +1,7 @@
+package labs3;
+
 // класс Художественная книга наслденик от КНИГИ имеет поле Жанр
-public class FictionBook extends Book{
+public class FictionBook extends Book {
    String Genre;
    public FictionBook(String name,String author, int pageCount, String genre){
        // вызываем конструктор родителя

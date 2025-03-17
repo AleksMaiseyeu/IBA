@@ -1,5 +1,7 @@
+package labs3;
+
 // научная книга наследник от КНИГА. поля: тематика, сложность
-public class NonFictionBook extends Book{
+public class NonFictionBook extends Book {
     String subjects;
     int complexity;
     
