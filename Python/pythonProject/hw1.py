@@ -17,12 +17,21 @@ print(newls)
 
 # Task 1.2 lab 2
 # Введите одномерный целочисленный список. Найдите наибольший нечетный элемент.
+# Найдите минимальный по модулю элемент списка.
+newls = [-3,2,9,8,-7,7]
 maxX = newls[0]
+minX = abs(maxX)
+print(newls)
 for y in range(len(newls)):
     if y % 2==1:
         if newls[y]>maxX:
             maxX=newls[y]
+    if abs(newls[y])<minX:
+        minX = abs(newls[y])
 print(maxX)
+print(minX)
+
+
 
 # Task 2.1 lab2
 # ---------------------------------------------------------------
