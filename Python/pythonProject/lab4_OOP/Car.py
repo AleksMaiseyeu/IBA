@@ -32,7 +32,7 @@ class Car:
         Car.__count -= 1
 
     def age(self):
-        print(now.year - self.year)
+        return (now.year - self.year)
 
     def set_mark(self, mark):
         self.__mark = mark
@@ -66,6 +66,17 @@ class Car:
             if i.get_mark()==mark:
                 print("рег. номер: ", i.reg_number, " марка: ", i.get_mark(), " cost: ", i.get_cost())
 
+    #список автомобилей заданной модели, которые эксплуатируются больше n-лет;
+    @classmethod
+    def showCarByModelOlderYear(cls, model, Y):
+        for cr in cls.__car:
+            if cr.model == model:
+                if cr.age()>Y:
+                    print("рег.номер: ", cr.reg_number,
+                         " марка: ", cr.get_mark(),
+                         " МОДЕЛЬ: ", cr.model,
+                        " cost: ", cr.get_cost(),
+                        " кол-во лет эксплуатации:", cr.age())
 
 
     # Статические - особый тип методов, которые принадлежат классу, а не экземпляру класса.
@@ -87,7 +98,7 @@ class Car:
 
 
 c1 = Car( "A5", 2022,"7654-IT7" )
-c1.age()
+print(c1.age())
 print(c1.get_color())
 c1.set_color('black')
 print(c1.get_color())
@@ -112,3 +123,6 @@ Car.add_car(c4)
 Car.add_car(c5)
 Car.countCar()
 Car.showCarByMark('mercedes')
+print('---------------------')
+Car.showCarByModelOlderYear("A5", 23)
+
