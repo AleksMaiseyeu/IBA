@@ -54,6 +54,24 @@ class Car:
 
     def get_id(self):
         return self.__id
+
+    # магический метод вывода информации об авто
+    def __str__(self):
+        return " ---Авто с гос.номером: " + self.reg_number + ", марка: " + self.get_mark() + ", model: " + self.model
+
+    # магический метод сравнения моделей авто
+    def __eq__(self, other):
+        if not isinstance(other, (str, Car)):
+            raise TypeError("Операнд справа должен иметь тип str или Car")
+
+        qModel = other if isinstance(other, str) else other.model
+
+        if self.model == qModel:
+                res =  "модели авто совпадают"
+        else:
+               res = "модели авто отличаются"
+        return res
+
     #добавим авто в список
     @classmethod
     def add_car(cls, car):
@@ -103,6 +121,9 @@ print(c1.get_color())
 c1.set_color('black')
 print(c1.get_color())
 c1.set_cost(23000)
+
+print(c1)
+
 print(c1.get_cost())
 print(Car.get_class(c1.get_cost()))
 
@@ -110,6 +131,8 @@ c1.age()
 Car.countCar()
 
 c2 = Car("A5", 2000, "5269-yy6")
+print(c1==c2)
+
 c3 = Car("A5", 2002, "5244-TR2")
 c3.set_mark('bmv')
 c4 = Car("B200", 2005, "9266-IT3")
